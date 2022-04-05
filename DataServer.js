@@ -22,24 +22,8 @@ const corsOptions = {
 }
 //Cors, Server needs to have cors rights to be able to serv
 //http and get request from two different sources. Web safety system
-//app.use(cors(corsOptions))
-//app.options('*', cors(corsOptions)) // include before other routes
-
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*")
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested, Accept, Referer, Content-Type, Accept Authorization, Access-Control-Allow-Headers, sec-ch-ua, sec-ch-ua-mobile, sec-ch-ua-platform, User-Agent"
-  )
-  if (req.method === "OPTIONS") {
-    res.header(
-      "Access-Control-Allow-Methods",
-      "POST, PUT, PATCH, GET, DELETE"
-    )
-    return res.status(200).json({})
-  }
-  next()
-})
+app.use(cors(corsOptions))
+app.options('/loadQuery', cors(corsOptions)) // include before other routes
 
 app.use(express.json({ limit: '1mb' }))
 //Body parser to parse incoming POST() from client
