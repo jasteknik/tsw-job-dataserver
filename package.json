@@ -2,11 +2,11 @@
   "name": "train-randomizer",
   "version": "1.0.0",
   "description": "Train sim randomizer",
-  "main": "index.js",
+  "main": "DataServer.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node DataServer.js"
   },
-  "author": "",
+  "author": "Jso",
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
