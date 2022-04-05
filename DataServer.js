@@ -14,12 +14,15 @@ const timetableQuery = {
   loco: ''
 }
 
+const corsOptions = {
+  origin: 'https://tsw-job-generator.herokuapp.com',
+  methods: ['GET','POST'],
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204 
+}
+
 //Cors, Server needs to have cors rights to be able to serv
 //http and get request from two different sources. Web safety system
-app.use(cors({
-  origin: 'https://tsw-job-generator.herokuapp.com',
-  methods: ['GET','POST']
-}))
+app.use(cors(corsOptions))
 app.use(express.json({ limit: '1mb' }))
 //Body parser to parse incoming POST() from client
 app.use(bodyParser.json())
