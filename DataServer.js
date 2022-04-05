@@ -30,10 +30,15 @@ app.use(bodyParser.urlencoded({ extended: true }))
 //Cors, Server needs to have cors rights to be able to serv
 //http and get request from two different sources. Web safety system
 app.use(cors(corsOptions))
+app.options('*', cors()) // include before other routes
+
+
 //Simple server page
 app.get('/', (req, res) => {
   res.send('<h1>TSW Timetable server!</h1>')
 })
+
+
 
 //Client get requests, /api
 app.get('/api', (req, res) => {
