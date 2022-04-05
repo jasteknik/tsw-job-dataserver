@@ -28,6 +28,16 @@ app.use(express.json({ limit: '1mb' }))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
+app.use(function(req,res,next) {
+  req.connection.setNoDelay(true)
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header("Access-Control-Allow-Credentials", true);
+      res.header("Access-Control-Allow-Origin", "https://tsw-job-generator.herokuapp.com"); 
+
+  res.header('Access-Control-Expose-Headers', 'agreementrequired');
+
+  next()
+})
 
 //Simple server page
 app.get('/', (req, res) => {
