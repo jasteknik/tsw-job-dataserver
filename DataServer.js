@@ -15,7 +15,7 @@ const timetableQuery = {
 }
 
 const corsOptions = {
-  origin: 'https://tsw-job-generator.herokuapp.com',
+  origin: '*',
   methods: ['GET','POST'],
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204 
 }
