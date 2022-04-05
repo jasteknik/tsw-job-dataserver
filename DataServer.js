@@ -15,11 +15,11 @@ const timetableQuery = {
 }
 
 const corsOptions = {
-  origin: '*',
-  methods: ['GET', 'POST', 'OPTIONS', 'DELETE', 'PUT'],
-  headers: ['Origin', 'Content-Type', 'Accept', 'Authorization', 'X-Request-With', 'X-CLIENT-ID', 'X-CLIENT-SECRET'],
-  credentials:true,
-  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204 
+  origin: '*'
+ // methods: ['GET', 'POST', 'OPTIONS', 'DELETE', 'PUT'],
+ // headers: ['Origin', 'Content-Type', 'Accept', 'Authorization', 'X-Request-With', 'X-CLIENT-ID', 'X-CLIENT-SECRET'],
+  //credentials:true,
+  //optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204 
 }
 
 app.use(express.json({ limit: '1mb' }))
@@ -30,7 +30,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 //Cors, Server needs to have cors rights to be able to serv
 //http and get request from two different sources. Web safety system
 app.use(cors(corsOptions))
-app.options('*', cors(corsOptions)) // include before other routes
+//app.options('*', cors(corsOptions)) // include before other routes
 
 
 //Simple server page
