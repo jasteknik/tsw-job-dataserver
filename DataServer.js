@@ -4,6 +4,7 @@ const app = express()
 const Datastore = require('nedb')
 const bodyParser = require('body-parser')
 const { resolve } = require('path')
+const file = require('./Modules/file')
 
 let db
 const dataPath = './data/'
@@ -52,8 +53,13 @@ app.listen(PORT, () => {
 async function ServerResponse(reqRoute, reqLoco) {
   const services = await FindServices(reqRoute, reqLoco)
   const newService = GetNewRandomTimetable(services)
-  console.log(newService)
-  return newService
+  const timetable = await GetTimetableForService(newService.id)
+  console.log(timetable)
+  const response = {
+    service: newService,
+    timetable: timetable
+  }
+  return response
 }
 
 //***********************************************//
@@ -70,6 +76,17 @@ function FindServices(aRoute, aLoco) {
        resolve(docs)
     })
     
+  })
+}
+
+function GetTimetableForService(aService){
+  const path = './rawdata/Peninsula/tb/json/'
+  const filename = aService + '.json'
+  return new Promise((resolve, reject) => {
+    file.ReadJsonFile(path, filename)
+      .then(data => {
+        resolve(data)
+      })
   })
 }
 
@@ -104,6 +121,8 @@ function GetNewRandomTimetable(timetableArray) {
   const random = Math.floor(Math.random() * timetableArray.length);
   return timetableArray[random]
 }
+
+
 
 function WaitUntil(time, routine) {
   return new Promise((resolve, reject) => {
