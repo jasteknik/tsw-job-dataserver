@@ -16,8 +16,8 @@ const timetableQuery = {
 
 const corsOptions = {
   origin: '*',
-  methods: [GET, POST, OPTIONS, DELETE, PUT],
-  headers: [Origin, Content-Type, Accept, Authorization, X-Request-With, X-CLIENT-ID, X-CLIENT-SECRET],
+  methods: ['GET', 'POST', 'OPTIONS', 'DELETE', 'PUT'],
+  headers: ['Origin', 'Content-Type', 'Accept', 'Authorization', 'X-Request-With', 'X-CLIENT-ID', 'X-CLIENT-SECRET'],
   credentials:true,
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204 
 }
