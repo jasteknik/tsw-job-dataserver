@@ -30,7 +30,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 //Cors, Server needs to have cors rights to be able to serv
 //http and get request from two different sources. Web safety system
 app.use(cors(corsOptions))
-app.options('*', cors()) // include before other routes
+app.options('*', cors(corsOptions)) // include before other routes
 
 
 //Simple server page
