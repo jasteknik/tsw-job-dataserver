@@ -5,7 +5,6 @@ const File = require('./Modules/file')
 let dataArray = []
 const routeDBPath = './data/services.db'
 
-
 //new neDB datastore
 const routeBase = new Datastore(routeDBPath); 
 const locoBase = new Datastore( './Data/locos.db'); 
@@ -33,7 +32,19 @@ function NewTimetableObject(aId, aStop, aArrival, aDeparture) {
   }
 }
 
+function NewRouteListItem(aId, aName, aServices, aLocos, aFreight, aPassanger) {
+  return {
+    id: aId,
+    name: aName,
+    services: aServices,
+    locos: aLocos,
+    freight: aFreight,
+    passanger: aPassanger
+  }
+}
 
+//all route IDs
+let routeList = ['SKA']
 
 //MAIN PROG CALLS
 async function Loop() {
@@ -62,6 +73,7 @@ async function Loop() {
   let fileArray
   let jsonForFile
   let toFile
+  let routeListItemArray = []
 
   let jsonFileNames = filesInCsvFolder.map(filename => {
     const string = filename.toString().substr(0, filename.indexOf(' -'))
@@ -70,16 +82,48 @@ async function Loop() {
   //console.log(pathToJson + jsonFileNames[0] + ".json")
 
   for (i in jsonFileNames){
-    let currentFile = jsonFileNames[i]
+    let jsonFileName = jsonFileNames[i]
     fileArray = await File.ReadFromFile(pathToCSV, filesInCsvFolder[i])
     //console.log("Array file ready " + filesInCsvFolder[i])
 
-    jsonForFile = await ConvertArrayToJson(fileArray)
+    jsonToFile = await ConvertArrayToJson(fileArray)
     //console.log("Json file ready " + pathToJson + currentFile + ".json")
 
-    toFile = await File.WriteToJsonSync(pathToJson, currentFile , jsonForFile)
-    console.log(toFile + currentFile + ".json")
+    toFile = await File.WriteToJsonSync(pathToJson, jsonFileName, jsonToFile)
+    console.log(toFile + jsonFileName + ".json")
   }
+
+  const pathToRouteListJson = './rawdata/Route/'
+  const fileName = 'routeList'
+
+  for (i in routeList) {
+    let currentRoute = routeList[i]
+    let wait
+    const serviceCount = await DatabaseCount(currentRoute)
+    
+    wait = await WaitUntil(1000, `Servicecount ${serviceCount} is calculated`)
+    console.log(wait)
+
+    const docs = await DatabaseFind(currentRoute)
+
+    wait = await WaitUntil(1000, `docs is calculated`)
+    console.log(wait)
+
+    const locoArray = await CreateLocoArray(docs)
+
+    wait = await WaitUntil(1000, `locoArray ${locoArray} is calculated`)
+    console.log(wait)
+
+    const serviceItem = CreateServiceFile(currentRoute, serviceCount, locoArray)
+    console.log(serviceItem)
+    routeListItemArray.push(serviceItem)
+  }
+  
+  //Write routelist.json from the json array of routeListItemArray
+  const writeRouteListToJson = await File.WriteToJsonSync(pathToRouteListJson, fileName, routeListItemArray)
+  console.log(writeRouteListToJson + "for " + fileName + ".json")
+  
+  
 }
 
 
@@ -124,14 +168,14 @@ function ReadLine(entry) {
     let entryObject
     for (i in entry) {
       const dataEntry = entry[i].toString().split(",")
+      IsRouteOnList(dataEntry[1]) //Update routeList -array
+
       const locoArray = dataEntry[3].toString().split(" / ")
-      console.log(locoArray)
-      //console.log(dataEntry[0])
       entryObject = NewEntryObject(
         dataEntry[0],   //id
         dataEntry[1],   //route
         dataEntry[2],   //service
-        locoArray,   //loco
+        locoArray,      //loco
         dataEntry[4],   //origin
         dataEntry[5],   //dest
         dataEntry[6],   //type
@@ -182,6 +226,79 @@ function InsertDatabase(arrayToDB) {
   }) 
 }
 
+function CreateRouteListJson() {
+  return new Promise((resolve, reject) => {
+
+  })
+}
+
+function CreateServiceFile(aRoute, aServiceCount, aLocoArray) {
+
+  const routeListItem = NewRouteListItem(
+    aRoute,                 //ID
+    'routename',            //Name
+    aServiceCount,          //Services
+    aLocoArray,             //Locos
+    'Yes',                  //Freight
+    'Yes'                   //Passanger
+  )
+
+  return routeListItem
+}
+
+function CreateLocoArray(docs) {
+  return new Promise((resolve, reject) => {
+    let locoArray = []
+  
+    docs.map(element => {
+      
+      element.loco.map(item => {
+        locoArray.push(item)
+      })
+    })
+
+    const unique = (value, index, self) => {
+      return self.indexOf(value) === index
+    }
+
+    const uniqueLocos = locoArray.filter(unique)
+    console.log(uniqueLocos)
+    resolve(uniqueLocos)
+  })
+}
+
+function DatabaseCount(aRoute) {
+  return new Promise((resolve, reject) => {
+    routeBase.count({ route: aRoute}, (err, count) => {
+      resolve(count)})
+  })
+}
+
+function DatabaseFind(aRoute) {
+  return new Promise((resolve, reject) => {
+    routeBase.find({ route: aRoute}, (err, docs) => {
+      resolve(docs)
+    })
+  })
+}
+
+function IsRouteOnList(routeId) {
+
+  let foundItem = 0
+  console.log("lets check " + routeId) 
+  routeList.forEach(element => {
+    if(element == routeId) { foundItem = foundItem + 1 }     
+  });
+
+  if (foundItem == 0) { routeList.push(routeId)}
+  console.log(routeList)
+}
+
+function WaitUntil(time, routine) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => resolve(routine), time)
+  })
+}
 
 //MAIN LOOP
 Loop();
