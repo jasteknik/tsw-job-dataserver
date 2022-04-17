@@ -226,12 +226,6 @@ function InsertDatabase(arrayToDB) {
   }) 
 }
 
-function CreateRouteListJson() {
-  return new Promise((resolve, reject) => {
-
-  })
-}
-
 function CreateServiceFile(aRoute, aServiceCount, aLocoArray) {
 
   const routeListItem = NewRouteListItem(

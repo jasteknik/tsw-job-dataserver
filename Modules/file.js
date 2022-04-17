@@ -57,10 +57,18 @@ function ReadFromFile(path, fileName) {
 
 function ReadJsonFile(path, fileName) {
   return new Promise((resolve, reject) => {
-    const jsonFile = fs.readFileSync(path + fileName);
-    resolve(JSON.parse(jsonFile))
+    const pathToJsonFile = path + fileName
+   // const jsonFile = fs.readFileSync(err, pathToJsonFile);
+   // if (err) reject('error on reading file: ' + pathToJsonFile)
+   // resolve(JSON.parse(jsonFile))
+
+    try{
+      const jsonFile = fs.readFileSync(pathToJsonFile)
+      resolve(JSON.parse(jsonFile))
+    } catch (err) {
+      reject(err)
+    }
   })
-  
 }
 
 function ListFolder(path) {
